@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Resizable Box with Character Estimation</title>
+    <style>
+        #resizableBox {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 300px;
+            height: 200px;
+            margin-left: -150px;
+            /* Half of initial width */
+            margin-top: -100px;
+            /* Half of initial height */
+            border: 2px solid #000;
+            box-sizing: border-box;
+            padding: 10px;
+            overflow: hidden;
+            font-size: 16px;
+            line-height: 1.2;
+        }
+
+        /* Content area inside the box */
+        #boxContent {
+            width: 100%;
+            height: 100%;
+            text-align: justify;
+            font-family: monospace;
+        }
+
+        /* Style for resize handles */
+        .resize-handle {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        /* Side handles */
+        .resize-handle.top,
+        .resize-handle.bottom {
+            height: 5px;
+            left: 5px;
+            right: 5px;
+            cursor: ns-resize;
+        }
+
+        .resize-handle.left,
+        .resize-handle.right {
+            width: 5px;
+            top: 5px;
+            bottom: 5px;
+            cursor: ew-resize;
+        }
+
+        .resize-handle.top {
+            top: 0;
+        }
+
+        .resize-handle.bottom {
+            bottom: 0;
+        }
+
+        .resize-handle.left {
+            left: 0;
+        }
+
+        .resize-handle.right {
+            right: 0;
+        }
+
+        /* Corner handles */
+        .resize-handle.corner {
+            width: 10px;
+            height: 10px;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .resize-handle.tl {
+            top: 0;
+            left: 0;
+            cursor: nwse-resize;
+        }
+
+        .resize-handle.tr {
+            top: 0;
+            right: 0;
+            cursor: nesw-resize;
+        }
+
+        .resize-handle.bl {
+            bottom: 0;
+            left: 0;
+            cursor: nesw-resize;
+        }
+
+        .resize-handle.br {
+            bottom: 0;
+            right: 0;
+            cursor: nwse-resize;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align: center;font-family: monospace;">Explain Gravity in <span id="charCount">n</span> Characters
+    </h1>
+    <div id="resizableBox">
+        <div id="boxContent"></div>
+        <!-- Side handles -->
+        <div class="resize-handle top"></div>
+        <div class="resize-handle right"></div>
+        <div class="resize-handle bottom"></div>
+        <div class="resize-handle left"></div>
+        <!-- Corner handles -->
+        <div class="resize-handle corner tl"></div>
+        <div class="resize-handle corner tr"></div>
+        <div class="resize-handle corner bl"></div>
+        <div class="resize-handle corner br"></div>
+    </div>
+
+    <script src="lookup_table.js"></script>
+    <script>
+        (function () {
+            var resizableBox = document.getElementById('resizableBox');
+            var boxContent = document.getElementById('boxContent');
+            var handles = resizableBox.querySelectorAll('.resize-handle');
+            var isResizing = false;
+            var currentHandle;
+            var startX, startY, startWidth, startHeight, startLeft, startTop;
+
+            handles.forEach(function (handle) {
+                handle.addEventListener('mousedown', function (e) {
+                    e.preventDefault();
+                    isResizing = true;
+                    currentHandle = handle;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    var rect = resizableBox.getBoundingClientRect();
+                    startWidth = rect.width;
+                    startHeight = rect.height;
+                    startLeft = rect.left;
+                    startTop = rect.top;
+
+                    document.addEventListener('mousemove', resizeBox);
+                    document.addEventListener('mouseup', stopResize);
+                });
+            });
+
+            function resizeBox(e) {
+                if (!isResizing) return;
+                var dx = e.clientX - startX;
+                var dy = e.clientY - startY;
+
+                if (currentHandle.classList.contains('right')) {
+                    resizableBox.style.width = startWidth + dx + 'px';
+                } else if (currentHandle.classList.contains('left')) {
+                    resizableBox.style.width = startWidth - dx + 'px';
+                    resizableBox.style.left = startLeft + dx + 'px';
+                }
+
+                if (currentHandle.classList.contains('bottom')) {
+                    resizableBox.style.height = startHeight + dy + 'px';
+                } else if (currentHandle.classList.contains('top')) {
+                    resizableBox.style.height = startHeight - dy + 'px';
+                    resizableBox.style.top = startTop + dy + 'px';
+                }
+
+                // Corner handles
+                if (currentHandle.classList.contains('tl')) {
+                    // Top-left corner
+                    resizableBox.style.width = startWidth - dx + 'px';
+                    resizableBox.style.left = startLeft + dx + 'px';
+                    resizableBox.style.height = startHeight - dy + 'px';
+                    resizableBox.style.top = startTop + dy + 'px';
+                } else if (currentHandle.classList.contains('tr')) {
+                    // Top-right corner
+                    resizableBox.style.width = startWidth + dx + 'px';
+                    resizableBox.style.height = startHeight - dy + 'px';
+                    resizableBox.style.top = startTop + dy + 'px';
+                } else if (currentHandle.classList.contains('bl')) {
+                    // Bottom-left corner
+                    resizableBox.style.width = startWidth - dx + 'px';
+                    resizableBox.style.left = startLeft + dx + 'px';
+                    resizableBox.style.height = startHeight + dy + 'px';
+                } else if (currentHandle.classList.contains('br')) {
+                    // Bottom-right corner
+                    resizableBox.style.width = startWidth + dx + 'px';
+                    resizableBox.style.height = startHeight + dy + 'px';
+                }
+
+                estimateCharacters();
+            }
+
+            function stopResize(e) {
+                isResizing = false;
+                document.removeEventListener('mousemove', resizeBox);
+                document.removeEventListener('mouseup', stopResize);
+            }
+
+            function getClosestKey(obj, key) {
+                return Object.keys(obj).reduce(function (prev, curr) {
+                    return (Math.abs(curr - key) < Math.abs(prev - key) ? curr : prev);
+                });
+            }
+
+            function estimateCharacters() {
+                var width = resizableBox.clientWidth - 20; // Subtract padding
+                var height = resizableBox.clientHeight - 20; // Subtract padding
+                var fontSize = parseFloat(window.getComputedStyle(resizableBox).fontSize);
+                var lineHeight = fontSize * 1.2;
+
+                // Average character width estimation
+                var avgCharWidth = fontSize * 0.6;
+
+                // Estimate characters per line and number of lines
+                var charsPerLine = Math.floor(width / avgCharWidth);
+                var lines = Math.floor(height / lineHeight);
+
+                var totalChars = charsPerLine * lines;
+
+                var maxChars = Math.max(...Object.keys(lookupTable).map(Number));
+
+                var overflow = true;
+                var i = maxChars;
+                var low = 0;
+                var high = maxChars;
+                var closestCount = 0;
+
+                while (low <= high) {
+                    var mid = Math.floor((low + high) / 2);
+                    closestCount = getClosestKey(lookupTable, mid);
+
+                    boxContent.textContent = lookupTable[closestCount] || "No string available for this character count.";
+                    document.getElementById('charCount').textContent = closestCount;
+
+                    // Compute if the box overflows
+                    var contentHeight = boxContent.scrollHeight;
+                    var contentWidth = boxContent.scrollWidth;
+                    overflow = contentHeight > height || contentWidth > width;
+
+                    if (overflow) {
+                        high = mid - 1;
+                    } else {
+                        low = mid + 1;
+                    }
+                }
+
+                tryCount = closestCount;
+                // Ensure the final closestCount does not cause overflow
+                while (overflow && tryCount > 0) {
+                    closestCount = getClosestKey(lookupTable, tryCount);
+
+                    boxContent.textContent = lookupTable[closestCount] || "No string available for this character count.";
+                    document.getElementById('charCount').textContent = closestCount;
+
+                    var contentHeight = boxContent.scrollHeight;
+                    var contentWidth = boxContent.scrollWidth;
+                    overflow = contentHeight > height || contentWidth > width;
+
+                    tryCount--;
+                }
+
+                // Find the closest character count available in the lookup table
+                //var charCounts = Object.keys(lookupTable).map(Number);
+
+                //var closestCount = charCounts.reduce(function (prev, curr) {
+                //    return (Math.abs(curr - totalChars) < Math.abs(prev - totalChars) ? curr : prev);
+                //});
+
+                //boxContent.textContent = lookupTable[closestCount] || "No string available for this character count.";
+            }
+
+            // Initial estimation on page load
+            estimateCharacters();
+        })();
+    </script>
+</body>
+
+</html>
