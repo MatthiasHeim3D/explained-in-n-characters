@@ -80,3 +80,10 @@ sorted_lookup_table = dict(sorted(lookup_table.items()))
 # Save the updated lookup table to the JSON file
 with open(lookup_table_path, "w") as file:
     json.dump(sorted_lookup_table, file, indent=4)
+    print(f"Lookup table saved to {lookup_table_path}")
+
+# Check occupancy of the lookup table
+lookup_table_size = len(lookup_table)
+available_keys = len([key for key in range(lookup_table_range_from, lookup_table_range_to + 1) if key in lookup_table])
+percentage = (available_keys / (lookup_table_range_to - lookup_table_range_from)) * 100
+print(f"Lookup table occupancy between {lookup_table_range_from} to {lookup_table_range_to}: {percentage:.1f}%")
