@@ -67,10 +67,10 @@ while tries < max_attempts:
         character_count = len(generated_text)
         
         if character_count not in lookup_table:
-            print(f"Generated text with {character_count} characters")
+            print(f"Target: {target_character_count}, Generated text with {character_count} characters")
             lookup_table[character_count] = generated_text
         else:
-            print(f"Skipping duplicate entry with {character_count} characters")
+            print(f"Target: {target_character_count}, Skipping duplicate entry with {character_count} characters")
     
     tries += 1
 
