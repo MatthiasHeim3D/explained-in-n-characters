@@ -5,7 +5,7 @@
     <title>Resizable Box with Character Estimation</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        #siteHeading {
+        .heading {
             text-align: center;
             font-family: monospace;
         }
@@ -100,15 +100,19 @@
             cursor: nwse-resize;
         }
 
+        #infoBar {
+            position: fixed;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            font-family: monospace;
+            z-index: 1000;
+        }
+
         /* Media query for mobile devices */
         @media (max-width: 1024px) {
-            #siteHeading {
-            font-size: 32px; /* Use pixels instead of em */
-            }
-
             #resizableBox {
-                font-size: 20px;
-                /* Increase font size */
                 padding: 15px;
             }
 
@@ -132,8 +136,8 @@
 </head>
 
 <body>
-    <h1 id="siteHeading">Explain Gravity in <span id="charCount">n</span> Characters
-    </h1>
+    <h1 class="heading">Explain Gravity in <span id="charCount">n</span> Characters</h1>
+    <h4 class="heading" style="color: #444;">Drag the edges or corners to resize the box.</h4>
     <div id="resizableBox">
         <div id="boxContent"></div>
         <!-- Side handles -->
@@ -146,6 +150,13 @@
         <div class="resize-handle corner tr"></div>
         <div class="resize-handle corner bl"></div>
         <div class="resize-handle corner br"></div>
+
+        <div id="infoBar">
+            <a href="https://github.com/MatthiasHeim3D/gravity-explained-in-n-characters" target="_blank">
+                <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" style="width: 20px; height: 20px; vertical-align: middle;">
+                GitHub
+            </a>
+        </div>
     </div>
 
     <!-- Include your lookup_table.js here -->
