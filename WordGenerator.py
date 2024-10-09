@@ -3,8 +3,16 @@ from openai import OpenAI
 import time
 import json
 
+lookup_table_range_from = 1 # Minimum character count to generate
+lookup_table_range_to = 5000 # Maximum character count to generate
+lookup_table_range_step = 50 # Step size for character count. Vary this in smaller ranges to fill the lookup table faster for smaller character counts
+max_attempts = 1 # Number of attempts to generate text with specified character count
+
+def get_promt(character_count):
+    return f"Explain the theory of gravity. The explanation should contain no formulas and be exactly {character_count} characters long."
+
 def generate_text(client, character_count):
-    prompt = f"Explain the theory of gravity. The explanation should contain no formulas and be exactly {character_count} characters long."
+    prompt = get_promt(character_count)
     generated_text = ""
 
     try:
@@ -49,9 +57,8 @@ else:
     lookup_table = {}
 
 tries = 0
-max_tries = 1
-while tries < max_tries:    
-    for target_character_count in range(5000, 10000, 500):
+while tries < max_attempts:    
+    for target_character_count in range(lookup_table_range_from, lookup_table_range_to, lookup_table_range_step):
         if target_character_count in lookup_table:
             continue
 
