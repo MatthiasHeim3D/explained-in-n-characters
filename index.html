@@ -119,6 +119,7 @@
         <div class="resize-handle corner br"></div>
     </div>
 
+    <!-- Include your lookup_table.js here -->
     <script src="lookup_table.js"></script>
     <script>
         (function () {
@@ -130,27 +131,49 @@
             var startX, startY, startWidth, startHeight, startLeft, startTop;
 
             handles.forEach(function (handle) {
-                handle.addEventListener('mousedown', function (e) {
-                    e.preventDefault();
-                    isResizing = true;
-                    currentHandle = handle;
+                handle.addEventListener('mousedown', startResize);
+                handle.addEventListener('touchstart', startResize);
+            });
+
+            function startResize(e) {
+                e.preventDefault();
+                isResizing = true;
+                currentHandle = e.target;
+
+                if (e.type === 'touchstart') {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                } else {
                     startX = e.clientX;
                     startY = e.clientY;
-                    var rect = resizableBox.getBoundingClientRect();
-                    startWidth = rect.width;
-                    startHeight = rect.height;
-                    startLeft = rect.left;
-                    startTop = rect.top;
+                }
 
-                    document.addEventListener('mousemove', resizeBox);
-                    document.addEventListener('mouseup', stopResize);
-                });
-            });
+                var rect = resizableBox.getBoundingClientRect();
+                startWidth = rect.width;
+                startHeight = rect.height;
+                startLeft = rect.left;
+                startTop = rect.top;
+
+                document.addEventListener('mousemove', resizeBox);
+                document.addEventListener('touchmove', resizeBox);
+                document.addEventListener('mouseup', stopResize);
+                document.addEventListener('touchend', stopResize);
+            }
 
             function resizeBox(e) {
                 if (!isResizing) return;
-                var dx = e.clientX - startX;
-                var dy = e.clientY - startY;
+
+                var clientX, clientY;
+                if (e.type === 'touchmove') {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                } else {
+                    clientX = e.clientX;
+                    clientY = e.clientY;
+                }
+
+                var dx = clientX - startX;
+                var dy = clientY - startY;
 
                 if (currentHandle.classList.contains('right')) {
                     resizableBox.style.width = startWidth + dx + 'px';
@@ -195,7 +218,9 @@
             function stopResize(e) {
                 isResizing = false;
                 document.removeEventListener('mousemove', resizeBox);
+                document.removeEventListener('touchmove', resizeBox);
                 document.removeEventListener('mouseup', stopResize);
+                document.removeEventListener('touchend', stopResize);
             }
 
             function getClosestKey(obj, key) {
@@ -246,7 +271,7 @@
                     }
                 }
 
-                tryCount = closestCount;
+                var tryCount = closestCount;
                 // Ensure the final closestCount does not cause overflow
                 while (overflow && tryCount > 0) {
                     closestCount = getClosestKey(lookupTable, tryCount);
@@ -260,15 +285,6 @@
 
                     tryCount--;
                 }
-
-                // Find the closest character count available in the lookup table
-                //var charCounts = Object.keys(lookupTable).map(Number);
-
-                //var closestCount = charCounts.reduce(function (prev, curr) {
-                //    return (Math.abs(curr - totalChars) < Math.abs(prev - totalChars) ? curr : prev);
-                //});
-
-                //boxContent.textContent = lookupTable[closestCount] || "No string available for this character count.";
             }
 
             // Initial estimation on page load
