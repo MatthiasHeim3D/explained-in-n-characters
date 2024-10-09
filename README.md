@@ -1,9 +1,10 @@
-# Explain Gravity in *n* Characters
-
-> [!NOTE]  
-> This is an experiment!
+# Gravity Explained in *n* Characters
 
 This project is an interactive web application that dynamically explains the theory of gravity in varying lengths, depending on the size of a resizable text box. As you adjust the box, the application estimates the number of characters that can fit and displays an explanation of gravity tailored to that character count.
+
+## Why
+
+Large language models have an incredible ability to stretch and squash language — They are able to compress vast concepts into bite-sized summaries, or expand simple ideas into much more detailed explanations. This project aims to visualize that linguistic elasticity by dynamically adjusting explanations of a topic, in this case gravity, to fit a given character limit.
 
 ## Demo
 
