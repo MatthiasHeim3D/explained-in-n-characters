@@ -23,7 +23,7 @@ def generate_text(client, character_count):
                     "content": prompt,
                 }
             ],
-            model="gpt-4o",
+            model="gpt-4o-mini",
             #max_tokens=length,  # Note: tokens are not the same as characters
             temperature=0.8,
         )
@@ -67,7 +67,7 @@ while tries < max_attempts:
         character_count = len(generated_text)
         
         if character_count not in lookup_table:
-            print(f"Generated text with {character_count} characters: {generated_text}")
+            print(f"Generated text with {character_count} characters")
             lookup_table[character_count] = generated_text
         else:
             print(f"Skipping duplicate entry with {character_count} characters")
@@ -84,6 +84,28 @@ with open(lookup_table_path, "w") as file:
 
 # Check occupancy of the lookup table
 lookup_table_size = len(lookup_table)
-available_keys = len([key for key in range(lookup_table_range_from, lookup_table_range_to + 1) if key in lookup_table])
+available_keys = len([key for key in range(lookup_table_range_from, lookup_table_range_to) if key in lookup_table])
 percentage = (available_keys / (lookup_table_range_to - lookup_table_range_from)) * 100
 print(f"Lookup table occupancy between {lookup_table_range_from} to {lookup_table_range_to}: {percentage:.1f}%")
+
+# Visualize the lookup table occupancy
+import matplotlib.pyplot as plt
+
+# Extracting the keys from the dictionary
+keys = sorted(lookup_table.keys())
+
+# Create a plot
+plt.figure(figsize=(10, 2))
+
+# Plot the keys on a number line as dots
+plt.scatter(keys, [1] * len(keys), marker="|", color="blue", s=200)
+
+# Formatting the plot
+plt.title("Lookup Table")
+plt.xlabel("Characters")
+plt.yticks([])  # Remove the y-axis as it is not needed
+plt.grid(True, axis='x', linestyle='--', alpha=0.7)
+
+# Show the plot
+plt.tight_layout()
+plt.show()
