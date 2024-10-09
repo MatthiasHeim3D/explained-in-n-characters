@@ -6,20 +6,15 @@
     <style>
         #resizableBox {
             position: absolute;
-            left: 50%;
-            top: 50%;
             width: 300px;
             height: 200px;
-            margin-left: -150px;
-            /* Half of initial width */
-            margin-top: -100px;
-            /* Half of initial height */
             border: 2px solid #000;
             box-sizing: border-box;
             padding: 10px;
             overflow: hidden;
             font-size: 16px;
             line-height: 1.2;
+            /* Remove initial centering styles */
         }
 
         /* Content area inside the box */
@@ -130,6 +125,18 @@
             var currentHandle;
             var startX, startY, startWidth, startHeight, startLeft, startTop;
 
+            // Center the box initially
+            function centerBox() {
+                var windowWidth = window.innerWidth;
+                var windowHeight = window.innerHeight;
+                var boxWidth = resizableBox.offsetWidth;
+                var boxHeight = resizableBox.offsetHeight;
+                resizableBox.style.left = (windowWidth - boxWidth) / 2 + 'px';
+                resizableBox.style.top = (windowHeight - boxHeight) / 2 + 'px';
+            }
+            centerBox();
+            window.addEventListener('resize', centerBox);
+
             handles.forEach(function (handle) {
                 handle.addEventListener('mousedown', startResize);
                 handle.addEventListener('touchstart', startResize);
@@ -153,6 +160,12 @@
                 startHeight = rect.height;
                 startLeft = rect.left;
                 startTop = rect.top;
+
+                // Ensure left and top are set in pixels
+                resizableBox.style.left = startLeft + 'px';
+                resizableBox.style.top = startTop + 'px';
+                resizableBox.style.right = 'auto';
+                resizableBox.style.bottom = 'auto';
 
                 document.addEventListener('mousemove', resizeBox);
                 document.addEventListener('touchmove', resizeBox);
@@ -247,7 +260,6 @@
                 var maxChars = Math.max(...Object.keys(lookupTable).map(Number));
 
                 var overflow = true;
-                var i = maxChars;
                 var low = 0;
                 var high = maxChars;
                 var closestCount = 0;
