@@ -3,7 +3,13 @@
 
 <head>
     <title>Resizable Box with Character Estimation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        #siteHeading {
+            text-align: center;
+            font-family: monospace;
+        }
+
         #resizableBox {
             position: absolute;
             width: 300px;
@@ -14,7 +20,6 @@
             overflow: hidden;
             font-size: 16px;
             line-height: 1.2;
-            /* Remove initial centering styles */
         }
 
         /* Content area inside the box */
@@ -94,11 +99,40 @@
             right: 0;
             cursor: nwse-resize;
         }
+
+        /* Media query for mobile devices */
+        @media (max-width: 1024px) {
+            #siteHeading {
+            font-size: 32px; /* Use pixels instead of em */
+            }
+
+            #resizableBox {
+                font-size: 20px;
+                /* Increase font size */
+                padding: 15px;
+            }
+
+            /* Enlarge resize handles */
+            .resize-handle.top,
+            .resize-handle.bottom {
+                height: 10px;
+            }
+
+            .resize-handle.left,
+            .resize-handle.right {
+                width: 10px;
+            }
+
+            .resize-handle.corner {
+                width: 20px;
+                height: 20px;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <h1 style="text-align: center;font-family: monospace;">Explain Gravity in <span id="charCount">n</span> Characters
+    <h1 id="siteHeading">Explain Gravity in <span id="charCount">n</span> Characters
     </h1>
     <div id="resizableBox">
         <div id="boxContent"></div>
