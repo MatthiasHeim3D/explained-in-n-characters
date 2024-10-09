@@ -28,6 +28,7 @@ Large language models have an incredible ability to stretch and squash language 
 
      ```bash
      pip install openai
+     pip install matplotlib
      ```
 
 3. **Obtain OpenAI API Key**
