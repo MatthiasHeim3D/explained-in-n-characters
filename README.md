@@ -2,7 +2,7 @@
 
 ![Expanding and shrinking gravity explanation text](./gravity_example.gif)
 
-This project is an interactive web application that dynamically explains the theory of gravity in varying lengths, depending on the size of a resizable text box. As you adjust the box, the application estimates the number of characters that can fit and displays an explanation of gravity tailored to that character count.
+A LLM experiment explaining the theory of gravity in varying lengths, depending on the size of a resizable text box. As you adjust the box, the application estimates the number of characters that can fit and displays an explanation of gravity tailored to that character count.
 
 ## Why
 
