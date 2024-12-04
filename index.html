@@ -34,6 +34,7 @@
         .resize-handle {
             position: absolute;
             background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #fff; /* Increased contrast by adding a border */
         }
 
         /* Side handles */
@@ -74,6 +75,7 @@
             width: 10px;
             height: 10px;
             background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #fff; /* Increased contrast by adding a border */
         }
 
         .resize-handle.tl {
@@ -129,9 +131,26 @@
             }
 
             .resize-handle.corner {
-                width: 20px;
-                height: 20px;
+                width: 30px;
+                height: 30px;
             }
+        }
+
+        /* Add hover effect for resize handles */
+        .resize-handle:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transition: background 0.3s ease;
+        }
+
+        /* Add icons to resize handles */
+        .resize-handle.corner::before {
+            content: "↔";
+            color: #fff;
+            font-size: 12px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
     </style>
 </head>
